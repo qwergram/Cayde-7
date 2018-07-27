@@ -1,16 +1,16 @@
 <template>
   <div class="login">
-    <h2>{{'auth.welcome' | translate}}</h2>
-    <form method="post" action="/auth/login" name="login">
+    <h2>Qwergram HQ Login</h2>
+    <form method="post" @submit.prevent="login" name="login">
       <div class="form-group">
         <div class="input-group">
-          <input type="text" id="email" required="required"/>
-          <label class="control-label" for="email">{{'auth.email' | translate}}</label><i class="bar"></i>
+          <input type="text" id="user" required="required" v-model="username"/>
+          <label class="control-label" for="user">{{'auth.user' | translate}}</label><i class="bar"></i>
         </div>
       </div>
       <div class="form-group">
         <div class="input-group">
-          <input type="password" id="password" required="required"/>
+          <input type="password" id="password" required="required" v-model="password"/>
           <label class="control-label" for="password">{{'auth.password' | translate}}</label><i class="bar"></i>
         </div>
       </div>
@@ -26,7 +26,19 @@
 
 <script>
   export default {
-    name: 'login'
+    name: 'login',
+    data: function () {
+      return {
+        'username': '',
+        'password': ''
+      }
+    },
+    methods: {
+      login: function () {
+        console.log(this.username)
+        console.log(this.password)
+      }
+    }
   }
 </script>
 
