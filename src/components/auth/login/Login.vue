@@ -49,7 +49,7 @@
           username: this.username,
           password: this.password,
           _callback: function () {
-            if (self.$store.state.user) {
+            if (self.$store.state.loggedIn) {
               self.$router.push('/dash')
             } else {
               self.error = true
