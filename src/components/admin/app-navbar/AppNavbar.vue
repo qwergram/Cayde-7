@@ -10,7 +10,7 @@
     <notification-dropdown/>
     <language-dropdown/>
     <profile-dropdown>
-      <img src="https://i.imgur.com/nfa5itq.png"/>
+      <img v-bind:src="profile"/>
     </profile-dropdown>
   </vuestic-navbar>
 
@@ -26,7 +26,11 @@
 
   export default {
     name: 'app-navbar',
-
+    data: function () {
+      return {
+        'profile': process.env.API_ENV + 'static/index/img/ghost.png'
+      }
+    },
     components: {
       VuesticNavbar,
       HeaderSelector,
