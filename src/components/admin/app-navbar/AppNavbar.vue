@@ -23,12 +23,13 @@
   import ProfileDropdown from './components/dropdowns/ProfileDropdown'
   import NotificationDropdown from './components/dropdowns/NotificationDropdown'
   import MessageDropdown from './components/dropdowns/MessageDropdown'
+  import store from '../../../store/index'
 
   export default {
     name: 'app-navbar',
     data: function () {
       return {
-        'profile': process.env.API_ENV + 'static/index/img/ghost.png'
+        profile: process.env.API_ENV + JSON.parse(store.state.user).profile_picture,
       }
     },
     components: {
