@@ -8,10 +8,11 @@ import * as getters from './getters'
 
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import jwt_decode from 'jwt-decode' // eslint-disable-line 
 
 
 Vue.use(Vuex)
-Vue.use(VueAxios, axios);
+Vue.use(VueAxios, axios)
 
 const store = new Vuex.Store({
   strict: true, // process.env.NODE_ENV !== 'production',
@@ -28,17 +29,17 @@ const store = new Vuex.Store({
     }
   },
   mutations: {
-    updateToken(state, newToken) {
+    updateToken (state, newToken) {
       localStorage.setItem('t', newToken)
       state.jwt = newToken
     },
-    removeToken(state) {
+    removeToken (state) {
       localStorage.removeItem('t')
       state.jwt = null
     }
   },
   actions: {
-    obtainToken(username, password) {
+    obtainToken (username, password) {
       const payload = {
         username: username,
         password: password
@@ -51,7 +52,7 @@ const store = new Vuex.Store({
           console.log(error)
         })
     },
-    refreshToken() {
+    refreshToken () {
       const payload = {
         token: this.state.jwt
       }
@@ -64,9 +65,21 @@ const store = new Vuex.Store({
           console.log(error)
         })
     },
-    inspectToken() {
+    inspectToken () {
       const token = this.state.jwt
-      // https://hackernoon.com/jwt-authentication-in-vue-js-and-django-rest-framework-part-2-788f0ad53ad5
+      if (token) {
+        const decoded = jwt_decode(token)
+        const exp = decoded.exp
+        const origIat = decoded.orig_iat
+
+        if (exp - (Date.now() / 1000) < 1800 && (Date.now() / 1000) - origIat < 628200) {
+          this.dispatch('refreshToken')
+        } else if (exp - (Date.now() / 1000) < 1800) {
+
+        } else {
+          // request auth again.
+        }
+      }
     }
   }
 })
