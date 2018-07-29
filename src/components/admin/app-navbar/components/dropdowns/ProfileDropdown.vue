@@ -9,7 +9,7 @@
       <div class="dropdown-menu-content">
         <div v-for="(option, id) in options" :key="id"
           class="dropdown-item plain-link-item">
-          <router-link :to="{name: option.redirectTo}" class="plain-link" href="#">
+          <router-link v-if="option.isStaff ? store.state.user.staff === option.isStaff : true" :to="{name: option.redirectTo}" class="plain-link" href="#">
             {{ option.name }}
           </router-link>
         </div>
@@ -19,8 +19,14 @@
 </template>
 
 <script>
+  import store from '../../../../../store/index' // eslint-ignore
   export default {
     name: 'profile-section',
+    data: function () {
+      return {
+        store: store
+      }
+    },
     props: {
       options: {
         type: Array,
@@ -28,6 +34,7 @@
           {
             name: '/dev/',
             redirectTo: 'dev',
+            isStaff: true
           },
           {
             name: 'My Profile',
