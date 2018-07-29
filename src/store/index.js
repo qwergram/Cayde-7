@@ -26,16 +26,19 @@ const store = new Vuex.Store({
       obtainJWT: process.env.API_ENV + 'api/auth/obtain/',
       refreshJWT: process.env.API_ENV + 'api/auth/refresh/',
       verifyJWT: process.env.API_ENV + 'api/auth/verify/'
-    }
+    },
+    user: false
   },
   mutations: {
     updateToken (state, newToken) {
       localStorage.setItem('t', newToken)
       state.jwt = newToken
+      state.user = true
     },
     removeToken (state) {
       localStorage.removeItem('t')
       state.jwt = null
+      state.user = false
     },
     updateCsrfToken (state, newToken) {
       localStorage.setItem('csrf', newToken)
@@ -60,6 +63,7 @@ const store = new Vuex.Store({
         .catch((error) => {
           console.log(error)
           console.log(error.response.data)
+          this.commit('removeToken')
         })
     },
     refreshToken () {
@@ -73,6 +77,7 @@ const store = new Vuex.Store({
         })
         .catch((error) => {
           console.log(error)
+          this.commit('removeToken')
         })
     },
     inspectToken () {
