@@ -1,16 +1,19 @@
 <template>
   <div class="login">
     <h2>Qwergram HQ Login</h2>
-    <form method="post" @submit.prevent="login" name="login">
-      <div class="form-group">
+    <form @submit="login" name="login">
+      <div class="form-group with-icon-right" :class="{'has-error': error}">
         <div class="input-group">
-          <input type="text" id="user" required="required" v-model="username" autocomplete="false"/>
-          <label class="control-label" for="user">{{'auth.user' | translate}}</label><i class="bar"></i>
+          <input v-on:keyup="resetError" type="text" id="user" required="required" v-model="username" autocomplete="false" autofocus :class="{'has-error': error}"/>
+          <i class="bar"></i>
+          <i class="fa fa-exclamation-triangle icon-right input-icon" v-show="error"></i>
+          <small v-show="error" class="help text-danger">{{ detail }}</small>
+          <label v-show="!error" class="control-label" for="user">{{'auth.user' | translate}}</label>
         </div>
       </div>
       <div class="form-group">
         <div class="input-group">
-          <input type="password" id="password" required="required" v-model="password"/>
+          <input v-on:keyup="resetError" type="password" id="password" required="required" v-model="password"/>
           <label class="control-label" for="password">{{'auth.password' | translate}}</label><i class="bar"></i>
         </div>
       </div>
@@ -30,13 +33,31 @@
     data: function () {
       return {
         'username': '',
-        'password': ''
+        'password': '',
+        'error': false,
+        'detail': null
       }
     },
     methods: {
-      login: function () {
-        this.$store.dispatch('obtainToken', {username: this.username, password: this.password})
-        console.log(this.$store.jwt)
+      resetError: function () {
+        this.error = false
+        this.detail = null
+      },
+      login: function (e) {
+        const self = this
+        this.$store.dispatch('obtainToken', {
+          username: this.username,
+          password: this.password,
+          _callback: function () {
+            if (self.$store.state.user) {
+              self.$router.replace('/dash')
+            } else {
+              self.error = true
+              self.detail = 'Invalid Credentials'
+            }
+          }
+        })
+        e.preventDefault()
       }
     }
   }
