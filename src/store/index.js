@@ -28,7 +28,7 @@ const store = new Vuex.Store({
       verifyJWT: process.env.API_ENV + 'api/auth/verify/',
       whoami: process.env.API_ENV + 'api/me/'
     },
-    user: false
+    user: localStorage.getItem('user')
   },
   mutations: {
     updateToken (state, newToken) {
@@ -50,8 +50,8 @@ const store = new Vuex.Store({
       state.csrf = null
     },
     updateUser (state, user) {
-      localStorage.setItem('user', user)
-      state.user = user
+      localStorage.setItem('user', JSON.stringify(user.data))
+      state.user = user.data
     }
   },
   actions: {
@@ -62,7 +62,8 @@ const store = new Vuex.Store({
             console.log(response)
             this.commit('updateUser', response)
           })
-          .catch(() => {
+          .catch((e) => {
+            console.log(e.response)
             this.commit('removeToken')
           })
       }
@@ -76,6 +77,8 @@ const store = new Vuex.Store({
       axios.post(this.state.endpoints.obtainJWT, payload)
         .then((response) => {
           this.commit('updateToken', response.data.token)
+          axios.defaults.headers.common['Authorization'] = 'JWT ' + this.state.jwt
+          this.dispatch('defineMe')
           if (callback) callback()
         })
         .catch(() => {
