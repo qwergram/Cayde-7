@@ -2,7 +2,7 @@
 
   <vuestic-navbar>
     <header-selector slot="selector" :isOpen.sync="valueProxy"/>
-    <span slot="logo" class="i-vuestic"></span>
+    <!-- <span slot="logo" class="i-vuestic"></span> -->
     <!-- <span slot="center">
       <a></a>
     </span> -->
