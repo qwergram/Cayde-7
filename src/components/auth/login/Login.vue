@@ -50,7 +50,7 @@
           password: this.password,
           _callback: function () {
             if (self.$store.state.user) {
-              self.$router.replace('/dash')
+              self.$router.push('/dash')
             } else {
               self.error = true
               self.detail = 'Invalid Credentials'
