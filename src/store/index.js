@@ -77,7 +77,7 @@ const store = new Vuex.Store({
       axios.post(this.state.endpoints.obtainJWT, payload)
         .then((response) => {
           this.commit('updateToken', response.data.token)
-          axios.defaults.headers.common['Authorization'] = 'JWT ' + this.state.jwt
+          axios.defaults.headers.common['Authorization'] = 'JWT ' + response.data.token
           this.dispatch('defineMe')
           if (callback) callback()
         })
