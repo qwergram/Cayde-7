@@ -6,9 +6,12 @@
     <!-- <span slot="center">
       <a></a>
     </span> -->
-    <message-dropdown/>
-    <notification-dropdown/>
-    <language-dropdown/>
+    <div class="col"></div>
+    <div class="col"></div>
+    <div class="col"></div>
+    <!-- <language-dropdown/> -->
+    <!-- <notification-dropdown/> -->
+    <!-- <message-dropdown/> -->
     <profile-dropdown>
       <img v-bind:src="profile"/>
     </profile-dropdown>
@@ -47,6 +50,7 @@
           if (store.state.user) {
             return process.env.API_ENV + store.state.user.profile_picture
           } else {
+            // Picture of Cayde-6 RIP buddy
             return 'https://imgur.com/tI5I666.png'
           }
         }
