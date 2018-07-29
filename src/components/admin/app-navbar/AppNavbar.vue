@@ -27,11 +27,6 @@
 
   export default {
     name: 'app-navbar',
-    data: function () {
-      return {
-        profile: process.env.API_ENV + JSON.parse(store.state.user).profile_picture,
-      }
-    },
     components: {
       VuesticNavbar,
       HeaderSelector,
@@ -47,6 +42,15 @@
       }
     },
     computed: {
+      profile: {
+        get () {
+          if (store.state.user) {
+            return process.env.API_ENV + store.state.user.profile_picture
+          } else {
+            return 'https://imgur.com/tI5I666.png'
+          }
+        }
+      },
       valueProxy: {
         get () {
           return this.isOpen
