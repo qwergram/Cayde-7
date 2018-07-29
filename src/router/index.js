@@ -238,9 +238,10 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
+  store.dispatch('verifyToken')
   const authRequired = to.matched.some((route) => route.meta.auth)
   const authPage = to.matched.some((route) => route.meta.authPage)
-  const authed = store.state.user
+  const authed = store.state.loggedIn && store.state.jwt
   if (authRequired && !authed) {
     next('/auth/login')
   } else if (authPage && authed) {
