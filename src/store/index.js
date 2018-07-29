@@ -9,6 +9,7 @@ import * as getters from './getters'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import jwt_decode from 'jwt-decode' // eslint-disable-line 
+import createPersistedState from 'vuex-persistedstate'
 
 
 Vue.use(Vuex)
@@ -16,6 +17,7 @@ Vue.use(VueAxios, axios)
 
 const store = new Vuex.Store({
   strict: true, // process.env.NODE_ENV !== 'production',
+  plugins: [createPersistedState()],
   getters,
   modules: {
     app
@@ -28,40 +30,37 @@ const store = new Vuex.Store({
       verifyJWT: process.env.API_ENV + 'api/auth/verify/',
       whoami: process.env.API_ENV + 'api/me/'
     },
-    user: localStorage.getItem('user')
+    loggedIn: false,
+    user: null
   },
   mutations: {
     updateToken (state, newToken) {
-      localStorage.setItem('t', newToken)
       state.jwt = newToken
-      state.user = true
+      state.loggedIn = true
     },
     removeToken (state) {
-      localStorage.removeItem('t')
-      localStorage.removeItem('user')
       state.jwt = null
-      state.user = false
+      state.user = null
+      state.loggedIn = false
     },
     updateCsrfToken (state, newToken) {
-      localStorage.setItem('csrf', newToken)
       state.csrf = newToken
     },
     removeCsrfToken (state) {
-      localStorage.removeItem('csrf')
       state.csrf = null
     },
     updateUser (state, user) {
-      localStorage.setItem('user', JSON.stringify(user.data))
-      state.user = user.data
+      state.user = user
+      state.loggedIn = true
     }
   },
   actions: {
     defineMe () {
       if (this.state.jwt) {
+        axios.defaults.headers.common['Authorization'] = 'JWT ' + this.state.jwt
         axios.get(this.state.endpoints.whoami)
           .then((response) => {
-            console.log(response)
-            this.commit('updateUser', response)
+            this.commit('updateUser', response.data)
           })
           .catch((e) => {
             console.log(e.response)
@@ -95,6 +94,7 @@ const store = new Vuex.Store({
       axios.post(this.state.endpoints.refreshJWT, payload)
         .then((response) => {
           this.commit('updateToken', response.data.token)
+          axios.defaults.headers.common['Authorization'] = 'JWT ' + this.state.jwt
         })
         .catch((error) => {
           console.log(error)
@@ -107,7 +107,7 @@ const store = new Vuex.Store({
         token: token
       }
       if (token) {
-        axios.post(this.state.endpoints.berifyJWT, payload)
+        axios.post(this.state.endpoints.verifyJWT, payload)
           .then((response) => {
             this.commit('updateToken', response.data.token)
           })
@@ -126,7 +126,7 @@ const store = new Vuex.Store({
         if (exp - (Date.now() / 1000) < 1800 && (Date.now() / 1000) - origIat < 628200) {
           this.dispatch('refreshToken')
         } else if (exp - (Date.now() / 1000) < 1800) {
-          this.dispatch('verifyToken')
+
         } else {
           this.commit('removeToken')
         }
