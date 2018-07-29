@@ -3,26 +3,16 @@ import Router from 'vue-router'
 import AppLayout from '../components/admin/AppLayout'
 import AuthLayout from '../components/auth/AuthLayout'
 import lazyLoading from './lazyLoading'
+import store from '../store/index'
 
 Vue.use(Router)
-
-const demoRoutes = []
-if (process.env.NODE_ENV === 'development') {
-  const VueBook = require('vue-book').default
-
-  demoRoutes.push(
-    VueBook(require.context('./..', true, /.demo.vue$/), '/demo'),
-    VueBook(require.context('./../components', true, /.vue$/), '/presentation'),
-  )
-}
 
 const EmptyParentComponent = {
   template: '<router-view></router-view>'
 }
 
-export default new Router({
+const router = new Router({
   routes: [
-    ...demoRoutes,
     {
       path: '*',
       redirect: { name: 'dashboard' }
@@ -51,12 +41,14 @@ export default new Router({
       name: 'Admin',
       path: '/admin',
       component: AppLayout,
+      meta: { auth: true },
       children: [
         {
           name: 'dashboard',
           path: 'dashboard',
           component: lazyLoading('dashboard/Dashboard'),
-          default: true
+          default: true,
+          meta: { auth: true },
         },
         {
           path: 'statistics',
@@ -233,3 +225,15 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  const authRequired = to.matched.some((route) => route.meta.auth)
+  const authed = store.state.user
+  if (authRequired && !authed) {
+    next('/auth/login')
+  } else {
+    next()
+  }
+})
+
+export default router
