@@ -38,6 +38,7 @@ const store = new Vuex.Store({
     },
     removeToken (state) {
       localStorage.removeItem('t')
+      localStorage.removeItem('user')
       state.jwt = null
       state.user = false
     },
@@ -100,6 +101,21 @@ const store = new Vuex.Store({
           this.commit('removeToken')
         })
     },
+    verifyToken () {
+      const token = this.state.jwt
+      const payload = {
+        token: token
+      }
+      if (token) {
+        axios.post(this.state.endpoints.berifyJWT, payload)
+          .then((response) => {
+            this.commit('updateToken', response.data.token)
+          })
+          .catch(() => {
+            this.commit('removeToken')
+          })
+      }
+    },
     inspectToken () {
       const token = this.state.jwt
       if (token) {
@@ -110,9 +126,9 @@ const store = new Vuex.Store({
         if (exp - (Date.now() / 1000) < 1800 && (Date.now() / 1000) - origIat < 628200) {
           this.dispatch('refreshToken')
         } else if (exp - (Date.now() / 1000) < 1800) {
-
+          this.dispatch('verifyToken')
         } else {
-          // request auth again.
+          this.commit('removeToken')
         }
       }
     }
