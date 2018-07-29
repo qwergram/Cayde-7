@@ -25,7 +25,8 @@ const store = new Vuex.Store({
     endpoints: {
       obtainJWT: process.env.API_ENV + 'api/auth/obtain/',
       refreshJWT: process.env.API_ENV + 'api/auth/refresh/',
-      verifyJWT: process.env.API_ENV + 'api/auth/verify/'
+      verifyJWT: process.env.API_ENV + 'api/auth/verify/',
+      whoami: process.env.API_ENV + 'api/me/'
     },
     user: false
   },
@@ -47,9 +48,25 @@ const store = new Vuex.Store({
     removeCsrfToken (state) {
       localStorage.removeItem('csrf')
       state.csrf = null
+    },
+    updateUser (state, user) {
+      localStorage.setItem('user', user)
+      state.user = user
     }
   },
   actions: {
+    defineMe () {
+      if (this.state.jwt) {
+        axios.get(this.state.endpoints.whoami)
+          .then((response) => {
+            console.log(response)
+            this.commit('updateUser', response)
+          })
+          .catch(() => {
+            this.commit('removeToken')
+          })
+      }
+    },
     obtainToken (context, params) {
       const payload = {
         username: params.username,
