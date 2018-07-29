@@ -10,7 +10,7 @@
         <div v-for="(option, id) in options" :key="id"
           class="dropdown-item plain-link-item">
           <router-link :to="{name: option.redirectTo}" class="plain-link" href="#">
-            {{ `user.${option.name}` | translate}}
+            {{ option.name }}
           </router-link>
         </div>
       </div>
@@ -21,18 +21,21 @@
 <script>
   export default {
     name: 'profile-section',
-
     props: {
       options: {
         type: Array,
         default: () => [
           {
-            name: 'profile',
-            redirectTo: '',
+            name: '/dev/',
+            redirectTo: 'dev',
           },
           {
-            name: 'logout',
-            redirectTo: 'login'
+            name: 'My Profile',
+            redirectTo: 'profile',
+          },
+          {
+            name: 'Logout',
+            redirectTo: 'logout'
           }
         ]
       }
