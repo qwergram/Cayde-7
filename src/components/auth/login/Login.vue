@@ -4,7 +4,7 @@
     <form method="post" @submit.prevent="login" name="login">
       <div class="form-group">
         <div class="input-group">
-          <input type="text" id="user" required="required" v-model="username"/>
+          <input type="text" id="user" required="required" v-model="username" autocomplete="false"/>
           <label class="control-label" for="user">{{'auth.user' | translate}}</label><i class="bar"></i>
         </div>
       </div>
@@ -35,8 +35,8 @@
     },
     methods: {
       login: function () {
-        console.log(this.username)
-        console.log(this.password)
+        this.$store.dispatch('obtainToken', {username: this.username, password: this.password})
+        console.log(this.$store.jwt)
       }
     }
   }

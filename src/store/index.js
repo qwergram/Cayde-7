@@ -23,9 +23,9 @@ const store = new Vuex.Store({
   state: {
     jwt: localStorage.getItem('t'),
     endpoints: {
-      obtainJWT: process.env.API_ENV + '/api/auth/obtain/',
-      refreshJWT: process.env.API_ENV + '/api/auth/refresh/',
-      verifyJWT: process.env.API_ENV + '/api/auth/verify/'
+      obtainJWT: process.env.API_ENV + 'api/auth/obtain/',
+      refreshJWT: process.env.API_ENV + 'api/auth/refresh/',
+      verifyJWT: process.env.API_ENV + 'api/auth/verify/'
     }
   },
   mutations: {
@@ -36,20 +36,30 @@ const store = new Vuex.Store({
     removeToken (state) {
       localStorage.removeItem('t')
       state.jwt = null
+    },
+    updateCsrfToken (state, newToken) {
+      localStorage.setItem('csrf', newToken)
+      state.csrf = newToken
+    },
+    removeCsrfToken (state) {
+      localStorage.removeItem('csrf')
+      state.csrf = null
     }
   },
   actions: {
-    obtainToken (username, password) {
+    obtainToken (context, params) {
       const payload = {
-        username: username,
-        password: password
+        username: params.username,
+        password: params.password
       }
+
       axios.post(this.state.endpoints.obtainJWT, payload)
         .then((response) => {
           this.commit('updateToken', response.data.token)
         })
         .catch((error) => {
           console.log(error)
+          console.log(error.response.data)
         })
     },
     refreshToken () {
