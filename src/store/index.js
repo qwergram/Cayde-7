@@ -55,15 +55,15 @@ const store = new Vuex.Store({
         username: params.username,
         password: params.password
       }
-
+      const callback = params._callback
       axios.post(this.state.endpoints.obtainJWT, payload)
         .then((response) => {
           this.commit('updateToken', response.data.token)
+          if (callback) callback()
         })
-        .catch((error) => {
-          console.log(error)
-          console.log(error.response.data)
+        .catch(() => {
           this.commit('removeToken')
+          if (callback) callback()
         })
     },
     refreshToken () {
