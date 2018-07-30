@@ -34,9 +34,23 @@
   import FeaturesTab from './features-tab/FeaturesTab.vue'
   import DataVisualisationTab from './data-visualisation-tab/DataVisualisation.vue'
   import DashboardBottomWidgets from './DashboardBottomWidgets.vue'
+  import axios from 'axios'
+  import store from '../../store/index'
 
   export default {
     name: 'dashboard',
+    data () {
+      return {
+        widgets: [],
+        loading: false
+      }
+    },
+    created () {
+      this.fetchWidgets()
+    },
+    watch: {
+      '$route': 'fetchWidgets'
+    },
     components: {
       DataVisualisationTab,
       DashboardInfoWidgets,
@@ -45,19 +59,16 @@
       FeaturesTab,
       DashboardBottomWidgets
     },
-
     methods: {
-      launchEpicmaxToast () {
-        this.showToast(`Let's work together!`, {
-          icon: 'fa-star-o',
-          position: 'top-right',
-          duration: Infinity,
-          action: {
-            text: 'Hire us',
-            href: 'http://epicmax.co/#/contact',
-            class: 'vuestic-toasted-link'
-          }
-        })
+      fetchWidgets () {
+        axios.defaults.headers.common['Authorization'] = 'JWT ' + store.state.jwt
+        axios.get(process.env.API_ENV + 'api/widgets/?page=' + store.state.currentPage)
+          .then((response) => {
+            console.log(response.data)
+          })
+          .catch(() => {
+            store.dispatch('verifyToken')
+          })
       }
     }
   }

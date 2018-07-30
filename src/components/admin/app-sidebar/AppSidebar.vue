@@ -49,6 +49,7 @@
         axios.get(process.env.API_ENV + 'api/dashboards/')
           .then((response) => {
             this.dashboards = response.data.results
+            store.commit('updateCurrentPage', this.dashboards[0])
             this.loading = false
           })
           .catch((error) => {
