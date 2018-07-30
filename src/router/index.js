@@ -65,7 +65,7 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  // store.dispatch('inspectToken')
+  setTimeout(500, () => { store.dispatch('verifyToken') }) // give everything a chance to update
   const authRequired = to.matched.some((route) => route.meta.auth)
   const authPage = to.matched.some((route) => route.meta.authPage)
   const authed = store.state.loggedIn && store.state.jwt

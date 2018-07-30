@@ -31,9 +31,13 @@ const store = new Vuex.Store({
       whoami: process.env.API_ENV + 'api/me/'
     },
     loggedIn: false,
-    user: null
+    user: null,
+    currentPage: null,
   },
   mutations: {
+    updateCurrentPage (state, page) {
+      state.currentPage = page
+    },
     updateToken (state, newToken) {
       state.jwt = newToken
       state.loggedIn = true
@@ -113,6 +117,7 @@ const store = new Vuex.Store({
           })
           .catch(() => {
             this.commit('removeToken')
+            location.href = '/auth'
           })
       }
     },
