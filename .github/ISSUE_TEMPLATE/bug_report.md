@@ -2,8 +2,8 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: 'Awaiting Review', 'Enhancement Requested'
-assignees: ''
+labels: Awaiting Review, Enhancement Requested
+assignees: qwergram
 
 ---
 
