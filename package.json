@@ -54,7 +54,7 @@
     "vuex-i18n": "^1.7.0",
     "vuex-persistedstate": "^2.5.4",
     "vuex-router-sync": "5.0.0",
-    "yarn": "^1.7.0"
+    "yarn": "^1.22.0"
   },
   "devDependencies": {
     "autoprefixer": "7.1.2",
